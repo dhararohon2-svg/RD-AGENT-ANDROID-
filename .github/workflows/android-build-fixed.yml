@@ -1,4 +1,4 @@
-name: AntiGem Android Build & Test
+name: RDA's Coding Android Build & Test
 
 on:
   workflow_dispatch:
@@ -46,9 +46,15 @@ jobs:
         uses: android-actions/setup-android@v3
 
       - name: Accept SDK licenses and install required packages
+        shell: bash
         run: |
+          set -euo pipefail
           yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+          sdkmanager --install \
+            "platform-tools" \
+            "platforms;android-36" \
+            "build-tools;36.0.0"
+          sdkmanager --list_installed
 
       - name: Verify wrapper and scripts
         run: |
@@ -79,7 +85,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: AntiGem-Android-Debug-${{ github.run_number }}
+          name: RDA-s-Coding-Android-Debug-${{ github.run_number }}
           if-no-files-found: warn
           retention-days: 14
           path: |
