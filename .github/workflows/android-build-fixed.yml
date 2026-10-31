@@ -44,17 +44,15 @@ jobs:
 
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          # Override the action's legacy default package list that requests
+          # the removed "tools" package. Required packages are installed below.
+          packages: "platform-tools"
 
       - name: Accept SDK licenses and install required packages
-        shell: bash
         run: |
-          set -euo pipefail
           yes | sdkmanager --licenses >/dev/null || true
-          sdkmanager --install \
-            "platform-tools" \
-            "platforms;android-36" \
-            "build-tools;36.0.0"
-          sdkmanager --list_installed
+          sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
 
       - name: Verify wrapper and scripts
         run: |
@@ -85,7 +83,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: RDA-s-Coding-Android-Debug-${{ github.run_number }}
+          name: AntiGem-Android-Debug-${{ github.run_number }}
           if-no-files-found: warn
           retention-days: 14
           path: |
