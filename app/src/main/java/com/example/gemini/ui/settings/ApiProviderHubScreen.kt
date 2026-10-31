@@ -30,7 +30,7 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
-internal data class ApiProfile(val id: String, val name: String, val baseUrl: String, val model: String, val key: String = "")
+data class ApiProfile(val id: String, val name: String, val baseUrl: String, val model: String, val key: String = "")
 
 internal object ApiProfileVault {
     private const val PREFS = "rda_api_profiles"
