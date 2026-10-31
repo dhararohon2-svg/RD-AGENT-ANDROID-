@@ -21,7 +21,7 @@ func init() {
 	if prefix := os.Getenv("PREFIX"); prefix != "" {
 		files = append(files, filepath.Join(prefix, "etc", "resolv.conf"))
 	}
-	files = append(files, "/data/data/com.termux/files/usr/etc/resolv.conf")
+	files = append(files, "/data/data/com.rda.ai/files/usr/etc/resolv.conf")
 	var servers []string
 	for _, f := range files {
 		if servers = readNameservers(f); len(servers) > 0 {

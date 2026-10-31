@@ -172,7 +172,7 @@ object LocalEnvironmentManager {
     fun getHomeDir(context: Context): File = File(context.filesDir, "home")
     fun getProjectsDir(context: Context): File = File(getHomeDir(context), "projects")
     fun getUbuntuRootDir(context: Context): File = File(context.filesDir, "ubuntu")
-    fun isTermuxPackage(context: Context): Boolean = context.packageName == "com.termux"
+    fun isTermuxPackage(context: Context): Boolean = context.packageName == "com.rda.ai"
 
     fun ensureProotExtracted(context: Context): String {
         val binDir = File(context.filesDir, "bin")
@@ -510,7 +510,7 @@ object LocalEnvironmentManager {
             if (!bin.exists()) return
             val script = """
                 |#!$prefix/bin/bash
-                |# Claude Code launcher written by AntiGem on every start (edits are overwritten).
+                |# Claude Code launcher written by RDA’s Coding on every start (edits are overwritten).
                 |# The official Claude binary needs glibc: start the newest installed version through the bundled loader.
                 |# Claude's updater only changes ~/.local/share/claude/versions and ~/.local/bin/claude, never this file.
                 |VERSIONS_DIR="$home/.local/share/claude/versions"
@@ -534,11 +534,11 @@ object LocalEnvironmentManager {
                 |    done
                 |fi
                 |if [ -z "${'$'}TARGET" ]; then
-                |    echo "Claude Code is not installed. Install it in AntiGem: Settings > Claude Code > Account & CLI." >&2
+                |    echo "Claude Code is not installed. Install it in RDA’s Coding: Settings > Claude Code > Account & CLI." >&2
                 |    exit 127
                 |fi
                 |if [ ! -x "${'$'}LOADER" ]; then
-                |    echo "The glibc runtime is missing (${'$'}LOADER). Reopen AntiGem to restore it." >&2
+                |    echo "The glibc runtime is missing (${'$'}LOADER). Reopen RDA’s Coding to restore it." >&2
                 |    exit 127
                 |fi
                 |# termux-exec is a bionic library: it must not be preloaded into the glibc process
@@ -583,7 +583,7 @@ object LocalEnvironmentManager {
             if (!libexecDir.exists()) libexecDir.mkdirs()
             val dispatcherFile = File(libexecDir, "termux-api")
             val scriptContent = """
-                #!/data/data/com.termux/files/usr/bin/bash
+                #!/data/data/com.rda.ai/files/usr/bin/bash
                 METHOD="${'$'}1"
                 shift
 
@@ -595,13 +595,13 @@ object LocalEnvironmentManager {
                     fi
                 fi
 
-                TMP_DIR="${'$'}{TMPDIR:-/data/data/com.termux/files/usr/tmp}"
+                TMP_DIR="${'$'}{TMPDIR:-/data/data/com.rda.ai/files/usr/tmp}"
                 mkdir -p "${'$'}TMP_DIR"
                 TMP_OUT="${'$'}TMP_DIR/api_out.${'$'}${'$'}"
 
                 am broadcast --user 0 \
                     -a "com.termux.api" \
-                    -n "com.termux/com.example.gemini.data.receiver.TermuxApiReceiver" \
+                    -n "com.rda.ai/com.example.gemini.data.receiver.TermuxApiReceiver" \
                     --es "api_method" "${'$'}METHOD" \
                     --es "socket_output" "${'$'}TMP_OUT" \
                     "${'$'}{EXTRA_ARGS[@]}" \
@@ -881,7 +881,7 @@ object LocalEnvironmentManager {
                     val targetUrl = if (isTermux) HARDCODED_ROOTFS_URL else UBUNTU_ROOTFS_URL
                     val targetAsset = if (isTermux) HARDCODED_ROOTFS_ASSET else UBUNTU_ROOTFS_ASSET
                     val targetSizeBytes = if (isTermux) HARDCODED_ROOTFS_SIZE_BYTES else UBUNTU_ROOTFS_SIZE_BYTES
-                    val titlePrefix = if (isTermux) "AntiGem Rootfs" else "Ubuntu Rootfs"
+                    val titlePrefix = if (isTermux) "RDA’s Coding Linux" else "Ubuntu Rootfs"
 
                     _installerState.value = LocalInstallerState.Downloading(
                         bytesDownloaded = 0L,
@@ -2601,7 +2601,7 @@ All files created here persist inside the application.
             File(binDir, "bash").exists() -> File(binDir, "bash").absolutePath
             File(prefixDir, "bin/bash").exists() -> File(prefixDir, "bin/bash").absolutePath
             File(binDir, "sh").exists() -> File(binDir, "sh").absolutePath
-            File("/data/data/com.termux/files/usr/bin/bash").exists() -> "/data/data/com.termux/files/usr/bin/bash"
+            File("/data/data/com.rda.ai/files/usr/bin/bash").exists() -> "/data/data/com.rda.ai/files/usr/bin/bash"
             else -> "sh"
         }
 

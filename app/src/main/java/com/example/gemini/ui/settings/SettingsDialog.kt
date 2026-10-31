@@ -84,7 +84,7 @@ import com.example.gemini.data.daemon.TermuxDaemonManager
 import com.example.gemini.data.daemon.IdeApiClient
 
 enum class SettingsSection(val title: String, val subtitle: String) {
-    MAIN("Settings & Preferences", "Configure your AntiGem experience"),
+    MAIN("Settings & Preferences", "Configure your RDA’s Coding experience"),
     APPEARANCE("Appearance & Theme", "Theme, dark mode, and chat font scaling"),
     SERVERS("Servers & Connectivity", "Configure AGY Hub and IDE Bridge endpoints"),
     WEBVIEW_EXTENSIONS("WebView Extensions", "Install and manage MCP extensions for the browser"),
@@ -97,6 +97,7 @@ enum class SettingsSection(val title: String, val subtitle: String) {
     COMMANDS("Commands & Permissions", "Auto-run policy, sandbox mode, and tool approvals"),
     CLAUDE("Claude Code", "Account, models, permissions, MCP, plugins & memory"),
     AGENTS("Agents", "Run Antigravity, Claude Code or both"),
+    API_PROVIDERS("AI Models & API Keys", "Add custom API endpoints, keys and model IDs"),
     DIAGNOSTICS("Diagnostics & Performance", "Live network connections, active streams & thread HUD"),
     ABOUT("About & Info", "App version, package details, and bridge export")
 }
@@ -550,6 +551,7 @@ fun SettingsDialog(
                         cardBorder = cardBorder
                     )
 
+                    SettingsSection.API_PROVIDERS -> ApiProviderHubScreen()
                     SettingsSection.AGENTS -> com.example.gemini.ui.agents.AgentsSettingsPage(
                         enabled = enabledAgents,
                         isApplying = isApplyingAgents,
@@ -601,6 +603,18 @@ private fun MainSettingsMenu(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        SettingsGroupHeader("AI Model Providers", MaterialTheme.colorScheme.primary, "Configure API-compatible models and keys")
+        SettingsCategoryCard(
+            icon = Icons.Outlined.Api,
+            iconTint = MaterialTheme.colorScheme.primary,
+            title = "AI Models & API Keys",
+            subtitle = "Custom endpoint URL, API key, model discovery and connection test",
+            badgeText = "API",
+            badgeColor = MaterialTheme.colorScheme.primary,
+            cardBg = cardBg,
+            cardBorder = cardBorder,
+            onClick = { onNavigate(SettingsSection.API_PROVIDERS) }
+        )
         SettingsGroupHeader("Agents", MaterialTheme.colorScheme.primary, "Which agents run, and the local server they share")
         SettingsCategoryCard(
             icon = Icons.Outlined.SmartToy,
@@ -1123,7 +1137,7 @@ private fun AppearanceSubScreen(
                         color = ClaudeTerracotta.copy(alpha = 0.15f)
                     ) {
                         Text(
-                            text = "How does AntiGem connect to AGY Hub?",
+                            text = "How does RDA’s Coding connect to AGY Hub?",
                             fontSize = (13 * chatFontScale).sp,
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
@@ -1143,7 +1157,7 @@ private fun AppearanceSubScreen(
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
                             Text(
-                                text = "AntiGem connects via gRPC-Web to stream live agent steps and tool executions.",
+                                text = "RDA’s Coding connects via gRPC-Web to stream live agent steps and tool executions.",
                                 fontSize = (13 * chatFontScale).sp,
                                 lineHeight = (18 * chatFontScale).sp,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -1669,7 +1683,7 @@ private fun AppearanceSubScreen(
                                 ) {
                                     androidx.compose.foundation.Image(
                                         painter = androidx.compose.ui.res.painterResource(id = com.example.gemini.R.drawable.splash_logo),
-                                        contentDescription = "AntiTerm",
+                                        contentDescription = "RDA’s Coding Terminal",
                                         modifier = Modifier.size(26.dp)
                                     )
                                 }
@@ -1678,13 +1692,13 @@ private fun AppearanceSubScreen(
 
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "AntiTerm",
+                                        text = "RDA’s Coding Terminal",
                                         fontSize = 13.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                     Text(
-                                        text = "Modern AntiGem styled icon & name",
+                                        text = "Modern RDA’s Coding styled icon & name",
                                         fontSize = 10.5.sp,
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                     )
@@ -1934,7 +1948,7 @@ private fun ServersSubScreen(
             },
             title = {
                 Text(
-                    text = "Reopen AntiGem?",
+                    text = "Reopen RDA’s Coding?",
                     fontWeight = FontWeight.Bold,
                     fontSize = 17.sp
                 )
@@ -2217,7 +2231,7 @@ private fun ServersSubScreen(
                 )
                 if (com.example.gemini.data.local.LocalEnvironmentManager.isTermuxPackage(LocalContext.current)) {
                     Text(
-                        text = "• Claude Code: the default is AntiGem's launcher, which runs the newest official Claude version through the bundled glibc. Claude updates never replace it.",
+                        text = "• Claude Code: the default is RDA’s Coding's launcher, which runs the newest official Claude version through the bundled glibc. Claude updates never replace it.",
                         fontSize = 11.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
@@ -4376,7 +4390,7 @@ private fun TerminalSubScreen(
                     )
 
                     Text(
-                        text = "AntiGem is wiping all local app data, rootfs, and settings.\n\nThe app will automatically close in $countdownSeconds seconds. Simply re-open AntiGem to start fresh.",
+                        text = "RDA’s Coding is wiping all local app data, rootfs, and settings.\n\nThe app will automatically close in $countdownSeconds seconds. Simply re-open RDA’s Coding to start fresh.",
                         fontSize = 13.5.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
@@ -4598,7 +4612,7 @@ private fun BackupsSubScreen(
                         Icon(Icons.Outlined.Folder, contentDescription = null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "Saves to: /sdcard/Download/Antigem/backups/bootrapz_<timestamp>.zip",
+                            text = "Saves to: /sdcard/Download/RDA-Coding/backups/bootrapz_<timestamp>.zip",
                             fontSize = 11.sp,
                             fontFamily = FontFamily.Monospace,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
@@ -4717,7 +4731,7 @@ private fun BackupsSubScreen(
                         Icon(Icons.Outlined.Folder, contentDescription = null, modifier = Modifier.size(14.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "Saves to: /sdcard/Download/Antigem/backups/agy_chats_backup_<timestamp>.zip",
+                            text = "Saves to: /sdcard/Download/RDA-Coding/backups/agy_chats_backup_<timestamp>.zip",
                             fontSize = 11.sp,
                             fontFamily = FontFamily.Monospace,
                             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
@@ -5130,7 +5144,7 @@ private fun ProjectsBackupRestoreDialog(
         val normHome = normalizeProjectPath(homeDir, homeDir)
         allProjects.filter { proj ->
             val p = normalizeProjectPath(proj.path, normHome)
-            p.isNotBlank() && p != normHome && p != "/" && p != "/data/data/com.termux/files" && p != "/data/data/com.termux"
+            p.isNotBlank() && p != normHome && p != "/" && p != "/data/data/com.rda.ai/files" && p != "/data/data/com.rda.ai"
         }.distinctBy { normalizeProjectPath(it.path, normHome) }
     }
 
@@ -5742,7 +5756,7 @@ private fun ProjectsBackupRestoreDialog(
                                 inspectArchive(it.trim())
                             },
                             label = { Text("Projects Archive File Path") },
-                            placeholder = { Text("/sdcard/Download/Antigem/backups/projects_backup_....zip") },
+                            placeholder = { Text("/sdcard/Download/RDA-Coding/backups/projects_backup_....zip") },
                             singleLine = true,
                             trailingIcon = {
                                 IconButton(onClick = { filePickerLauncher.launch("*/*") }) {
@@ -5896,7 +5910,7 @@ private fun ProjectsBackupRestoreDialog(
                                 value = customRestoreDir,
                                 onValueChange = { customRestoreDir = it },
                                 label = { Text("Custom Restore Directory") },
-                                placeholder = { Text("/data/data/com.termux/files/home/restored_projects") },
+                                placeholder = { Text("/data/data/com.rda.ai/files/home/restored_projects") },
                                 singleLine = true,
                                 modifier = Modifier.fillMaxWidth()
                             )
@@ -6264,7 +6278,7 @@ private fun DataProtectionSubScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "Why enable this? AntiGem hosts a full local Linux environment with your Node/Python packages, Git repos, and active coding projects. An accidental drag-to-uninstall from the home screen wipes all of it permanently.\n\nActivating Android Device Administrator greys out the 'Uninstall' button at the OS level across phone launchers. You can safely disable this anytime if you wish to uninstall.",
+                    text = "Why enable this? RDA’s Coding hosts a full local Linux environment with your Node/Python packages, Git repos, and active coding projects. An accidental drag-to-uninstall from the home screen wipes all of it permanently.\n\nActivating Android Device Administrator greys out the 'Uninstall' button at the OS level across phone launchers. You can safely disable this anytime if you wish to uninstall.",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                     lineHeight = 16.sp
@@ -6409,7 +6423,7 @@ private fun DataProtectionSubScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "When enabled (default), tapping 'Clear Data' in Android's phone Settings > App Info opens AntiGem's Safe Space Manager instead of wiping everything instantly with one click. This prevents accidental wipes and allows safe cache-only cleanup.\n\nYou can toggle this off anytime if you prefer the standard raw Android 'Clear Data' button.",
+                    text = "When enabled (default), tapping 'Clear Data' in Android's phone Settings > App Info opens RDA’s Coding's Safe Space Manager instead of wiping everything instantly with one click. This prevents accidental wipes and allows safe cache-only cleanup.\n\nYou can toggle this off anytime if you prefer the standard raw Android 'Clear Data' button.",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                     lineHeight = 16.sp
@@ -6442,7 +6456,7 @@ private fun DataProtectionSubScreen(
             title = { Text("Disable Uninstall Protection?") },
             text = {
                 Text(
-                    "This will remove AntiGem's Device Admin status. The app will become vulnerable to accidental home-screen uninstallation.",
+                    "This will remove RDA’s Coding's Device Admin status. The app will become vulnerable to accidental home-screen uninstallation.",
                     fontSize = 13.sp
                 )
             },
@@ -8216,7 +8230,7 @@ private fun AutomationSubScreen(
 
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "Allows the AI to generate images and videos on Google Flow (flow.google.com) through your own signed-in session in the in-app browser, and to read your Flow projects, media and credits. Open Flow in the AntiGem browser and sign in first, and keep AntiGem open while generating. Files are kept once in ~/flow-media (never copied to your gallery) and fetched only when the AI needs them.",
+                    text = "Allows the AI to generate images and videos on Google Flow (flow.google.com) through your own signed-in session in the in-app browser, and to read your Flow projects, media and credits. Open Flow in the RDA’s Coding browser and sign in first, and keep RDA’s Coding open while generating. Files are kept once in ~/flow-media (never copied to your gallery) and fetched only when the AI needs them.",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
                     lineHeight = 17.sp
@@ -8754,7 +8768,7 @@ private fun AboutSubScreen(
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "AntiGem",
+                    text = "RDA’s Coding",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -8943,8 +8957,8 @@ private fun AboutSubScreen(
                                         updateCheckResultText = null
                                     } else {
                                         isUpdateCheckError = false
-                                        updateCheckResultText = "AntiGem is up to date (v${BuildConfig.VERSION_NAME})."
-                                        Toast.makeText(context, "AntiGem is up to date!", Toast.LENGTH_SHORT).show()
+                                        updateCheckResultText = "RDA’s Coding is up to date (v${BuildConfig.VERSION_NAME})."
+                                        Toast.makeText(context, "RDA’s Coding is up to date!", Toast.LENGTH_SHORT).show()
                                     }
                                 }.onFailure { err ->
                                     isUpdateCheckError = true

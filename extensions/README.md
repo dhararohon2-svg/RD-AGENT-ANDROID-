@@ -48,7 +48,7 @@ node --experimental-vm-modules --test app/src/test/browserextensions/*.test.mjs
 For a standalone host (the app normally manages it):
 
 ```sh
-node --experimental-vm-modules /data/user/0/com.termux/files/browser-runtime/extension-host.mjs --serve --root ~/extensions --port 8865 --device-id YOUR_DEVICE_ID
+node --experimental-vm-modules /data/user/0/com.rda.ai/files/browser-runtime/extension-host.mjs --serve --root ~/extensions --port 8865 --device-id YOUR_DEVICE_ID
 ```
 
 Do not run this alongside the app-managed host on the same port. Settings uses the per-extension HTTP endpoint. A manual stdio client can use `--connect http://127.0.0.1:8865 --extension-id google-flow --device-id YOUR_DEVICE_ID` with the private runtime launcher.

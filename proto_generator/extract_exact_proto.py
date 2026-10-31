@@ -104,7 +104,7 @@ def parse_file_descriptor(data):
     return filename, package, services
 
 def scan_file_descriptors():
-    binary_path = "/data/data/com.termux/files/usr/bin/agy.va39"
+    binary_path = "/data/data/com.rda.ai/files/usr/bin/agy.va39"
     with open(binary_path, "rb") as f:
         data = f.read()
 

@@ -84,7 +84,7 @@ class AppUpdateManager(private val context: Context) {
 
             // Auto-generate package-specific download URL based on remote version name and flavor
             val currentPkg = context.packageName
-            val flavorType = if (currentPkg == "com.termux") "termux" else "standard"
+            val flavorType = if (currentPkg == "com.rda.ai") "termux" else "standard"
             val downloadUrl = "https://github.com/santoshkurmi/antigem/releases/download/v$remoteVersionName/antiGem-$flavorType-v$remoteVersionName-release.apk"
 
             if (remoteVersionCode > BuildConfig.VERSION_CODE && downloadUrl.isNotBlank()) {

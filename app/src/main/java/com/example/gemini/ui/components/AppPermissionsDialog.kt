@@ -213,7 +213,7 @@ fun AppPermissionsDialog(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Welcome to AntiGem",
+                    text = "Welcome to RDA’s Coding",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     color = textPrimary,
@@ -266,7 +266,7 @@ fun AppPermissionsDialog(
                     badgeText = "Optional",
                     badgeColor = GeminiBlue,
                     accentColor = GeminiBlue,
-                    description = "Allows AntiGem to access /sdcard to import local bootstrap packages, inspect files, and manage external code workspaces.",
+                    description = "Allows RDA’s Coding to access /sdcard to import local bootstrap packages, inspect files, and manage external code workspaces.",
                     isGranted = hasStorage,
                     onGrantClick = { requestStorage() }
                 )
@@ -319,7 +319,7 @@ fun AppPermissionsDialog(
                     )
                 ) {
                     Text(
-                        text = if (hasNotification) "Continue to AntiGem 🚀" else "Notifications Required to Proceed",
+                        text = if (hasNotification) "Continue to RDA’s Coding 🚀" else "Notifications Required to Proceed",
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp
                     )

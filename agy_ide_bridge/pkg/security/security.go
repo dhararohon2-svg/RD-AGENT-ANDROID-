@@ -52,7 +52,7 @@ func BuildFramedHeader(token string) string {
 func getTokenFilePath() string {
 	home, err := os.UserHomeDir()
 	if err != nil || home == "" {
-		home = "/data/data/com.termux/files/home"
+		home = "/data/data/com.rda.ai/files/home"
 	}
 	return filepath.Join(home, ".antigem_bridge", "csrf_token.txt")
 }

@@ -2,7 +2,7 @@ import re
 import gzip
 from google.protobuf import descriptor_pb2
 
-binary_path = "/data/data/com.termux/files/usr/bin/agy.va39"
+binary_path = "/data/data/com.rda.ai/files/usr/bin/agy.va39"
 with open(binary_path, "rb") as f:
     data = f.read()
 

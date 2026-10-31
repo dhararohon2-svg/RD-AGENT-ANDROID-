@@ -79,7 +79,7 @@ def parse_full_file(data):
     return filename, package, messages, enums
 
 def extract_all_messages():
-    binary_path = "/data/data/com.termux/files/usr/bin/agy.va39"
+    binary_path = "/data/data/com.rda.ai/files/usr/bin/agy.va39"
     with open(binary_path, "rb") as f:
         data = f.read()
 
@@ -110,5 +110,5 @@ if __name__ == "__main__":
     print("REQ:", msgs.get(target_req))
     print("RESP:", msgs.get(target_resp))
 
-    with open("/data/user/0/com.termux/files/home/.gemini/antigravity-cli/brain/37642fbe-6e57-4020-96b7-236e0a38422e/scratch/agent_state_messages.json", "w") as f:
+    with open("/data/user/0/com.rda.ai/files/home/.gemini/antigravity-cli/brain/37642fbe-6e57-4020-96b7-236e0a38422e/scratch/agent_state_messages.json", "w") as f:
         json.dump({"msgs": msgs, "enums": enums}, f, indent=2)

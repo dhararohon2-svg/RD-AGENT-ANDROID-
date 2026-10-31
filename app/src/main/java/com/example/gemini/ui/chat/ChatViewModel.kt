@@ -181,7 +181,18 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     val isConversationsLoading = agyBackend.isConversationsLoading
     val artifacts = agyBackend.artifacts
     val pendingApprovals = agyBackend.pendingApprovals
-    val isStreaming = byAgent(agyBackend.isStreaming, claudeBackend.isStreaming)
+    private val customApiRunning = MutableStateFlow(false)
+    private val _activeCustomApiProfile = MutableStateFlow<com.example.gemini.ui.settings.ApiProfile?>(
+        com.example.gemini.ui.settings.ApiProfileVault.activeProfile(application)
+    )
+    val activeCustomApiProfile: StateFlow<com.example.gemini.ui.settings.ApiProfile?> = _activeCustomApiProfile.asStateFlow()
+    fun refreshCustomApiProfile() {
+        _activeCustomApiProfile.value = com.example.gemini.ui.settings.ApiProfileVault.activeProfile(getApplication())
+    }
+    private var customApiJob: Job? = null
+    val isStreaming: StateFlow<Boolean> = combine(store.currentConversation, agyBackend.isStreaming, claudeBackend.isStreaming, customApiRunning) { conv, agy, claude, custom ->
+        custom || if (conv?.agent == AgentKind.CLAUDE) claude else agy
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
     val availableModels = byAgent(agyBackend.availableModels, claudeBackend.availableModels)
     val enabledModelIds = agyBackend.enabledModelIds
     val enabledModels = byAgent(agyBackend.enabledModels, claudeBackend.availableModels)
@@ -230,7 +241,9 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     fun logoutFromAgyHub() = agyBackend.logoutFromAgyHub()
     val activeInstances = agyBackend.activeInstances
     val isAnyGenerationOrTaskActive = agyBackend.isAnyGenerationOrTaskActive
-    val isCurrentChatActivelyRunning = byAgent(agyBackend.isCurrentChatActivelyRunning, claudeBackend.isCurrentChatActivelyRunning)
+    val isCurrentChatActivelyRunning: StateFlow<Boolean> = combine(store.currentConversation, agyBackend.isCurrentChatActivelyRunning, claudeBackend.isCurrentChatActivelyRunning, customApiRunning) { conv, agy, claude, custom ->
+        custom || if (conv?.agent == AgentKind.CLAUDE) claude else agy
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
     val isCurrentChatBackgroundActive = byAgent(agyBackend.isCurrentChatBackgroundActive, alwaysFalse)
     val connectionState = agyBackend.connectionState
     fun refreshActiveInstances() = agyBackend.refreshActiveInstances()
@@ -241,6 +254,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         if (AgentKind.CLAUDE in enabledAgents.value) claudeBackend.retryConnections()
     }
     fun onAppForegrounded() {
+        refreshCustomApiProfile()
         if (AgentKind.AGY in enabledAgents.value) agyBackend.onAppForegrounded()
         if (isClaudeEnabled) {
             claudeBackend.onAppForegrounded()
@@ -287,14 +301,54 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     fun selectModel(modelId: String) = if (isClaudeActive) claudeBackend.selectModel(modelId) else agyBackend.selectModel(modelId)
     fun sendMessage(content: String) {
         val handoff = pendingHandoffPrompt
-        if (handoff != null) {
+        val routedContent = if (handoff != null) {
             pendingHandoffPrompt = null
             sharedTaskStateStore.clear()
-            val safeContext = handoff.take(28000)
-            val combined = "$content\n\n---\nWorkspace handoff context from the previous agent (verify before acting):\n$safeContext"
-            if (isClaudeActive) claudeBackend.sendMessage(combined) else agyBackend.sendMessage(combined)
-        } else {
-            if (isClaudeActive) claudeBackend.sendMessage(content) else agyBackend.sendMessage(content)
+            "$content\n\n---\nWorkspace handoff context from the previous agent (verify before acting):\n${handoff.take(28000)}"
+        } else content
+
+        // A selected custom OpenAI-compatible provider is now a real main-chat route, not only a test panel.
+        // File/terminal tool execution still belongs to a tool-enabled coding agent and is not fabricated here.
+        val customProfile = if (!isClaudeActive && store.attachments.value.isEmpty() && content.isNotBlank()) {
+            com.example.gemini.ui.settings.ApiProfileVault.activeProfile(getApplication()).also { _activeCustomApiProfile.value = it }
+        } else null
+        if (customProfile != null) {
+            sendThroughCustomApi(customProfile, routedContent)
+            return
+        }
+        if (isClaudeActive) claudeBackend.sendMessage(routedContent) else agyBackend.sendMessage(routedContent)
+    }
+
+    private fun sendThroughCustomApi(profile: com.example.gemini.ui.settings.ApiProfile, prompt: String) {
+        if (customApiRunning.value) return
+        val conv = store.currentConversation.value ?: run { startNewChat(AgentKind.AGY); store.currentConversation.value } ?: return
+        val prior = store.messages.value.takeLast(16).mapNotNull { msg ->
+            val role = if (msg.role == MessageRole.USER) "User" else if (msg.role == MessageRole.ASSISTANT) "Assistant" else null
+            role?.let { "$it: ${msg.content.take(5000)}" }
+        }.joinToString("\n\n")
+        val requestPrompt = if (prior.isBlank()) prompt else "Conversation context (most recent turns):\n$prior\n\nNew user message:\n$prompt"
+        val userMessage = ChatMessage(conversationId = conv.id, role = MessageRole.USER, content = prompt)
+        store.messages.value = store.messages.value + userMessage
+        val updatedConv = conv.copy(
+            title = if (conv.title == "New Chat" && store.messages.value.count { it.role == MessageRole.USER } == 1) prompt.lines().firstOrNull().orEmpty().take(40).ifBlank { "Custom AI Chat" } else conv.title,
+            updatedAt = System.currentTimeMillis(),
+            modelId = profile.model
+        )
+        store.currentConversation.value = updatedConv
+        customApiRunning.value = true
+        customApiJob?.cancel()
+        customApiJob = viewModelScope.launch {
+            val reply = withContext(Dispatchers.IO) {
+                runCatching { com.example.gemini.ui.settings.runApiChat(profile, requestPrompt) }
+                    .getOrElse { "Custom API request failed: ${it.message ?: it.javaClass.simpleName}" }
+            }
+            store.messages.value = store.messages.value + ChatMessage(
+                conversationId = updatedConv.id,
+                role = MessageRole.ASSISTANT,
+                content = reply,
+                modelId = profile.model
+            )
+            customApiRunning.value = false
         }
     }
     val isTranscribingAudio = agyBackend.isTranscribingAudio

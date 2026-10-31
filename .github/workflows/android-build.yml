@@ -1,4 +1,4 @@
-name: AntiGem Android Build & Test
+name: RDA’s Coding Android Build & Test
 
 on:
   workflow_dispatch:
@@ -79,7 +79,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: AntiGem-Android-Debug-${{ github.run_number }}
+          name: RDA-Coding-Android-Debug-${{ github.run_number }}
           if-no-files-found: warn
           retention-days: 14
           path: |

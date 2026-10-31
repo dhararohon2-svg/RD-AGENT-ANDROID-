@@ -176,6 +176,7 @@ fun ChatScreen(
     val messages by viewModel.messages.collectAsState()
     val artifacts by viewModel.artifacts.collectAsState()
     val selectedModelId by viewModel.selectedModelId.collectAsState()
+    val activeCustomApiProfile by viewModel.activeCustomApiProfile.collectAsState()
     val availableModels by viewModel.availableModels.collectAsState()
     val enabledModels by viewModel.enabledModels.collectAsState()
     val enabledModelIds by viewModel.enabledModelIds.collectAsState()
@@ -300,6 +301,8 @@ fun ChatScreen(
     LaunchedEffect(showSettingsDialog) {
         if (showSettingsDialog) {
             viewModel.loadSecurityAndProjectSettings()
+        } else {
+            viewModel.refreshCustomApiProfile()
         }
     }
 
@@ -774,7 +777,12 @@ fun ChatScreen(
             },
             family = com.example.gemini.domain.model.ModelFamily.CLAUDE
         )
-    } else AiModel.findInList(enabledModels, selectedModelId, preferredModelName)
+    } else if (activeCustomApiProfile != null) AiModel(
+        id = activeCustomApiProfile!!.model,
+        displayName = "${activeCustomApiProfile!!.name} · ${activeCustomApiProfile!!.model}",
+        family = com.example.gemini.domain.model.ModelFamily.OTHER,
+        description = "Custom OpenAI-compatible API provider"
+    ) else AiModel.findInList(enabledModels, selectedModelId, preferredModelName)
     val currentQuota = quotas.find { it.modelId == selectedModelId }
 
     val activeChatProject by TermuxDaemonManager.activeProject.collectAsState()
@@ -1978,9 +1986,9 @@ fun ChatScreen(
 
                 // Chat Input Bar with Bottom Model & Thinking Selector Pills (Claude Android Style)
                 ChatInputBar(
-                    isOnline = if (isClaudeChat) !claudeState.isBlocking else systemConnectionState.canSend,
-                    isAuth = if (isClaudeChat) claudeChatState != com.example.gemini.data.agent.claude.ClaudeStatus.SIGNED_OUT && claudeChatState != com.example.gemini.data.agent.claude.ClaudeStatus.SIGNING_IN else systemConnectionState.isAuth,
-                    offlineMessage = if (isClaudeChat) when (claudeState) {
+                    isOnline = if (isClaudeChat) !claudeState.isBlocking else (activeCustomApiProfile != null || systemConnectionState.canSend),
+                    isAuth = if (isClaudeChat) claudeChatState != com.example.gemini.data.agent.claude.ClaudeStatus.SIGNED_OUT && claudeChatState != com.example.gemini.data.agent.claude.ClaudeStatus.SIGNING_IN else (activeCustomApiProfile != null || systemConnectionState.isAuth),
+                    offlineMessage = if (!isClaudeChat && activeCustomApiProfile != null) "Custom API selected. Check its key, URL, and model if a request fails." else if (isClaudeChat) when (claudeState) {
                         com.example.gemini.data.agent.claude.ClaudeStatus.NOT_INSTALLED -> "Claude Code is not installed. Set it up in Settings."
                         com.example.gemini.data.agent.claude.ClaudeStatus.BRIDGE_OUTDATED -> "Restart the local server to use Claude Code."
                         else -> "The local server is offline. Start it to send messages."
@@ -1999,7 +2007,7 @@ fun ChatScreen(
                     onOpenModelSelector = {
                         focusManager.clearFocus(force = true)
                         keyboardController?.hide()
-                        showModelSelector = true
+                        if (activeCustomApiProfile != null) showSettingsDialog = true else showModelSelector = true
                     },
                     onOpenThinkingSelector = {
                         focusManager.clearFocus(force = true)

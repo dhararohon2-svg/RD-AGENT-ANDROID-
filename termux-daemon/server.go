@@ -95,7 +95,7 @@ type MkdirReq struct {
 func main() {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		homeDir = "/data/data/com.termux/files/home"
+		homeDir = "/data/data/com.rda.ai/files/home"
 	}
 	projectsDir := filepath.Join(homeDir, "projects")
 	_ = os.MkdirAll(projectsDir, 0755)

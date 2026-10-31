@@ -103,7 +103,7 @@ fun FullScreenLocalToolsInstaller(
                 title = {
                     Column {
                         Text(
-                            text = "AntiGem Environment",
+                            text = "RDA’s Coding Environment",
                             fontSize = 17.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -199,7 +199,7 @@ fun FullScreenLocalToolsInstaller(
                 text = when (installerState) {
                     is LocalInstallerState.Success -> if (isTermux) "Termux-compatible shell, coreutils & AGY tools are installed and ready." else "Ubuntu ARM64 container, bash, glibc & AGY tools are ready."
                     is LocalInstallerState.Error -> "Failed to unpack rootfs. You can retry or pick a local ZIP archive."
-                    is LocalInstallerState.Idle -> if (isTermux) "Select how you would like to set up the local Termux environment for AntiGem:" else "Select how you would like to set up the Ubuntu Linux container for AntiGem:"
+                    is LocalInstallerState.Idle -> if (isTermux) "Select how you would like to set up the local Termux environment for RDA’s Coding:" else "Select how you would like to set up the Ubuntu Linux container for RDA’s Coding:"
                     is LocalInstallerState.Discovering -> "Checking releases for the latest verified rootfs archive."
                     is LocalInstallerState.AwaitingConfirmation -> "Review details below and confirm to begin installation."
                     is LocalInstallerState.Downloading -> "Fetching rootfs archive into secure application storage."
@@ -886,7 +886,7 @@ fun FullScreenLocalToolsInstaller(
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = when (selectedSourceType) {
-                                0 -> if (isTermux) "Download & Install AntiGem (~350MB)" else "Download & Install Ubuntu Base"
+                                0 -> if (isTermux) "Download & Install RDA’s Coding (~350MB)" else "Download & Install Ubuntu Base"
                                 1 -> "Download Base Termux (~33MB)"
                                 else -> if (selectedFileUri != null) "Install Local ZIP" else "Choose ZIP File"
                             },
@@ -905,7 +905,7 @@ fun FullScreenLocalToolsInstaller(
                             .height(46.dp),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text("Skip Setup & Open AntiGem Chat", fontSize = 14.sp)
+                        Text("Skip Setup & Open RDA’s Coding Chat", fontSize = 14.sp)
                     }
                 }
 
@@ -968,7 +968,7 @@ fun FullScreenLocalToolsInstaller(
                             .height(48.dp),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text("Run in Background & Open AntiGem")
+                        Text("Run in Background & Open RDA’s Coding")
                     }
                 }
 

@@ -3,7 +3,7 @@
     <!-- Pure white splash background -->
     <item android:drawable="@android:color/white" />
 
-    <!-- Centered AntiGem Logo -->
+    <!-- Centered RDA’s Coding logo -->
     <item
         android:gravity="center"
         android:width="160dp"

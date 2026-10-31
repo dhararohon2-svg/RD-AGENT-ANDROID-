@@ -3,7 +3,7 @@ import re
 from collections import defaultdict
 
 def run():
-    binary_path = "/data/data/com.termux/files/usr/bin/agy.va39"
+    binary_path = "/data/data/com.rda.ai/files/usr/bin/agy.va39"
     cmd = ["strings", binary_path]
     res = subprocess.run(cmd, stdout=subprocess.PIPE, text=True, errors="ignore")
     lines = res.stdout.splitlines()
@@ -48,7 +48,7 @@ def run():
                     methods_by_service[svc].add(name)
                 idx = line.find(prefix, idx + 1)
 
-    with open("/data/user/0/com.termux/files/home/.gemini/antigravity-cli/brain/37642fbe-6e57-4020-96b7-236e0a38422e/scratch/grpc_apis.txt", "w") as out:
+    with open("/data/user/0/com.rda.ai/files/home/.gemini/antigravity-cli/brain/37642fbe-6e57-4020-96b7-236e0a38422e/scratch/grpc_apis.txt", "w") as out:
         for svc in known_services:
             out.write(f"### `{svc}` ({len(methods_by_service[svc])} RPCs)\n")
             for m in sorted(methods_by_service[svc]):

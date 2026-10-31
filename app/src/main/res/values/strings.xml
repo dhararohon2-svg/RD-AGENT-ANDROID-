@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">RDA\'s Coding</string>
-    <string name="anti_term_name">AntiTerm</string>
-    <string name="termux_name">Termux</string>
-    <string name="accessibility_service_name">AntiGem AI Automation</string>
-    <string name="accessibility_service_description">Enables AntiGem AI Assistant to inspect the screen, tap buttons, scroll, input text, and automate tasks natively on your device.</string>
+    <string name="anti_term_name">RDA’s Coding Terminal</string>
+    <string name="termux_name">RDA’s Coding Linux</string>
+    <string name="accessibility_service_name">RDA’s Coding AI Automation</string>
+    <string name="accessibility_service_description">Enables RDA’s Coding AI Assistant to inspect the screen, tap buttons, scroll, input text, and automate tasks natively on your device.</string>
     <string name="copy_text">Copy</string>
     <string name="paste_text">Paste</string>
     <string name="text_selection_more">More</string>

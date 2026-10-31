@@ -1761,7 +1761,7 @@ func (h *Handler) McpConfigHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func injectTermuxEnvIfNeeded(rawContent string) string {
-	libTermuxExec := "/data/data/com.termux/files/usr/lib/libtermux-exec.so"
+	libTermuxExec := "/data/data/com.rda.ai/files/usr/lib/libtermux-exec.so"
 	if _, err := os.Stat(libTermuxExec); err != nil {
 		return rawContent
 	}
@@ -1789,9 +1789,9 @@ func injectTermuxEnvIfNeeded(rawContent string) string {
 			if _, hasPath := envMap["PATH"]; !hasPath {
 				home, _ := os.UserHomeDir()
 				if home != "" {
-					envMap["PATH"] = filepath.Join(home, ".local", "bin") + ":/data/data/com.termux/files/usr/bin:/system/bin"
+					envMap["PATH"] = filepath.Join(home, ".local", "bin") + ":/data/data/com.rda.ai/files/usr/bin:/system/bin"
 				} else {
-					envMap["PATH"] = "/data/data/com.termux/files/home/.local/bin:/data/data/com.termux/files/usr/bin:/system/bin"
+					envMap["PATH"] = "/data/data/com.rda.ai/files/home/.local/bin:/data/data/com.rda.ai/files/usr/bin:/system/bin"
 				}
 			}
 			sMap["env"] = envMap

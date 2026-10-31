@@ -3,7 +3,7 @@ from io import BytesIO
 import json
 from scratch.extract_exact_proto import parse_file_descriptor, read_varint
 
-binary_path = "/data/data/com.termux/files/usr/bin/agy.va39"
+binary_path = "/data/data/com.rda.ai/files/usr/bin/agy.va39"
 with open(binary_path, "rb") as f:
     data = f.read()
 
@@ -22,7 +22,7 @@ for off in offsets:
                     print(f"FOUND at {pos}: File={fname} Pkg={pkg}")
                     for s_name, methods in svcs:
                         print(f"Service: {pkg}.{s_name} with {len(methods)} methods")
-                        with open("/data/user/0/com.termux/files/home/.gemini/antigravity-cli/brain/37642fbe-6e57-4020-96b7-236e0a38422e/scratch/language_server_schema.json", "w") as jf:
+                        with open("/data/user/0/com.rda.ai/files/home/.gemini/antigravity-cli/brain/37642fbe-6e57-4020-96b7-236e0a38422e/scratch/language_server_schema.json", "w") as jf:
                             json.dump({
                                 "file": fname,
                                 "package": pkg,

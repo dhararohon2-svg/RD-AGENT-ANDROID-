@@ -1,4 +1,4 @@
-name: Build & Publish Release
+name: RDA’s Coding — Build & Publish Release
 
 on:
   push:
